@@ -158,10 +158,10 @@
         .className += ' fa fa-search';
         document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
         .title += 'Search for a place';
+       var baseMaps = {};
         var overlaysTree = [
-            {label: "Outubro", layer: layer_Outubro_2},
-            {label: "Setembro", layer: layer_Setembro_1},
-            {label: "OpenStreetMap", layer: layer_OpenStreetMap_0, radioGroup: 'bm' },]
+            {label:  "OpenStreetMap", layer: layer_OpenStreetMap_0},
+            {label: "Densidade de Kernel", layer: layer_DensidadedeKernel_1},]
         var lay = L.control.layers.tree(null, overlaysTree,{
             //namedToggle: true,
             //selectorBack: false,
@@ -172,62 +172,32 @@
             collapsed: false, 
         });
         lay.addTo(map);
-		document.addEventListener("DOMContentLoaded", function() {
-            // set new Layers List height which considers toggle icon
-            function newLayersListHeight() {
-                var layerScrollbarElement = document.querySelector('.leaflet-control-layers-scrollbar');
-                if (layerScrollbarElement) {
-                    var layersListElement = document.querySelector('.leaflet-control-layers-list');
-                    var originalHeight = layersListElement.style.height 
-                        || window.getComputedStyle(layersListElement).height;
-                    var newHeight = parseFloat(originalHeight) - 50;
-                    layersListElement.style.height = newHeight + 'px';
-                }
-            }
-            var isLayersListExpanded = true;
-            var controlLayersElement = document.querySelector('.leaflet-control-layers');
-            var toggleLayerControl = document.querySelector('.leaflet-control-layers-toggle');
-            // toggle Collapsed/Expanded and apply new Layers List height
-            toggleLayerControl.addEventListener('click', function() {
-                if (isLayersListExpanded) {
-                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
-                } else {
-                    controlLayersElement.classList.add('leaflet-control-layers-expanded');
-                }
-                isLayersListExpanded = !isLayersListExpanded;
-                newLayersListHeight()
-            });	
-			// apply new Layers List height if toggle layerstree
-			if (controlLayersElement) {
-				controlLayersElement.addEventListener('click', function(event) {
-					var toggleLayerHeaderPointer = event.target.closest('.leaflet-layerstree-header-pointer span');
-					if (toggleLayerHeaderPointer) {
-						newLayersListHeight();
-					}
-				});
-			}
-            // Collapsed/Expanded at Start to apply new height
-            setTimeout(function() {
-                toggleLayerControl.click();
-            }, 10);
-            setTimeout(function() {
-                toggleLayerControl.click();
-            }, 10);
-            // Collapsed touch/small screen
-            var isSmallScreen = window.innerWidth < 650;
-            if (isSmallScreen) {
-                setTimeout(function() {
-                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
-                    isLayersListExpanded = !isLayersListExpanded;
-                }, 500);
-            }  
-        });       
         setBounds();
         L.ImageOverlay.include({
             getBounds: function () {
                 return this._bounds;
             }
         });
+            function addLegendLink() {
+    var layerControlItems = document.querySelectorAll('.leaflet-control-layers-selector + span');
+    layerControlItems.forEach(function(item) {
+        if (item.textContent.trim() === "OpenStreetMap") {
+            var osmLink = document.createElement('a');
+            osmLink.href = 'https://www.openstreetmap.org/copyright';
+            osmLink.innerText = 'OpenStreetMap';
+            osmLink.target = '_blank';
+            item.innerHTML = '';
+            item.appendChild(osmLink);
+        }
+    });
+}
+addLegendLink();
+
+var legendImg = document.createElement('img');
+legendImg.src = 'Legenda.png'; // Substitua 'Legenda.png' pelo caminho da sua imagem
+legendImg.style.marginTop = '5px'; // Adiciona um espaçamento superior para separar a imagem do texto
+var layerControl = document.querySelector('.leaflet-control-layers-overlays');
+layerControl.appendChild(legendImg);
         </script>
     </body>
 </html>
